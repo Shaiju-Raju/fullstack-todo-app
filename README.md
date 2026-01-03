@@ -33,4 +33,7 @@ It supports full CRUD operations and demonstrates React ↔ Express integration.
 ---
 
 ## 📂 Project Structure
-
+ToDoApp/
+├── todo-frontend/
+├── todo-backend/
+└── README.md
