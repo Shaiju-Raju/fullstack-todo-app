@@ -6,6 +6,7 @@ import ToDos from './Components/ToDos';
 
 function App() {
 
+  //Fetching data from API
   useEffect( () => {
     async function loadTodos() {
       const res = await fetch("http://localhost:3000/todos");
@@ -15,8 +16,11 @@ function App() {
     loadTodos();
   },[])
 
+  // Declaration of todos state
   const [toDos, setToDos] = useState([]);
 
+
+//Adding item to Todos
    async function addItem(item) {
     if(item.trim() === "") return;
 
@@ -29,23 +33,20 @@ function App() {
     });
 
     const data = await res.json();
-    setToDos(data);
+    setToDos(prevValue => [...prevValue, data]);
   }
 
-  function editItem() {
-    console.log("Clicked Edit Item");
-  }
-
+//Delete an Item from Todos
  async function deleteItem(id) {
   const res = await fetch(`http://localhost:3000/todos/${id}`, {
     method: "DELETE"
   });
 
-  const data = await res.json();
-  setToDos(data)
-    
+  setToDos(prevValue => prevValue.filter(todo => todo.id !== id));
   }
 
+
+//Edit an Item from Todos
    async function editItem(id) {
     const newValue = prompt("Enter New Value")
 
@@ -59,10 +60,12 @@ function App() {
       body: JSON.stringify({text: newValue})
     });
 
-    const data = await res.json();
-    setToDos(data);
-
-
+    const updatedData = await res.json();
+    setToDos(prevValue =>
+      prevValue.map(todo =>
+        todo.id === id ? updatedData : todo
+      )
+    )
   }
 
 
