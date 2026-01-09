@@ -22,7 +22,7 @@ app.use("/auth", authRoutes);
 
 app.get("/todos", authMiddleware, async (req,res) => {
 try {
-    const result = await pool.query("SELECT * FROM todos WHERE user_id = $1",[req.user.userID]);
+    const result = await pool.query("SELECT * FROM todos WHERE user_id = $1",[req.user.userId]);
     res.json(result.rows);
 } catch (err) {
     console.error(err);
@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 app.post("/todos", authMiddleware, async (req,res) => {
 try {
     const {text} = req.body;
-    const result = await pool.query("INSERT INTO todos (text, user_id) VALUES ($1, $2) RETURNING *",[text, req.user.userID]);
+    const result = await pool.query("INSERT INTO todos (text, user_id) VALUES ($1, $2) RETURNING *",[text, req.user.userId]);
     res.json(result.rows[0]);
 } catch (err) {
     console.error(err);
@@ -53,7 +53,7 @@ app.delete("/todos/:id", authMiddleware, async (req, res) => {
     }
 
 try {
-    const result = await pool.query("DELETE FROM todos WHERE id = $1 AND user_id =$2 RETURNING *", [id, req.user.userID]);
+    const result = await pool.query("DELETE FROM todos WHERE id = $1 AND user_id =$2 RETURNING *", [id, req.user.userId]);
 
     if(result.rowCount === 0) {
         return res.status(400).json({error: "Not Authorized"});
@@ -76,7 +76,7 @@ app.put("/todos/:id", authMiddleware, async (req, res) => {
     }
 
     try {
-        const result = await pool.query(`UPDATE todos SET text = $1 WHERE id = $2 AND user_id =$3 RETURNING *`,[updatedText,id, req.user.userID]);
+        const result = await pool.query(`UPDATE todos SET text = $1 WHERE id = $2 AND user_id =$3 RETURNING *`,[updatedText,id, req.user.userId]);
         res.json(result.rows[0])
 
     } catch (err) {
